@@ -10,19 +10,29 @@ import FormControl from "@material-ui/core/FormControl";
 import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import {useStyles} from '../Components/useStyles'
-import { ContainerSignUp, Form, ButtonStyled, SignupTitle, GoLoginText, ImageLogo} from './style'
+import { ContainerSignUp, Form, ButtonStyled, SignupTitle, GoLoginText} from './style'
 import {useHistory} from "react-router-dom";
-import logo from "../Img/logo_spotenu.png"
 import TextField from '@material-ui/core/TextField';
 import MenuItem from '@material-ui/core/MenuItem';
+import { HeaderUser } from '../Components/Header';
 
 
 export const SignupListener = () => {
   const classes = useStyles();
   const history = useHistory();
   const [currency, setCurrency] = React.useState('');
+  const token = localStorage.getItem("token");
+
+  if(token)
+    history.push('/')
+
+  const handleInputChange = event => {
+    const { name, value } = event.target;
+    onChange(name, value);
+  };
 
   const handleChange = (event) => {
+    console.log(event.target.value)
     setCurrency(event.target.value);
   };
 
@@ -30,7 +40,6 @@ export const SignupListener = () => {
     password: "",
     showPassword: false
   });
-
 
   const handleClickShowPassword = () => {
     setValues({ ...values, showPassword: !values.showPassword });
@@ -45,35 +54,10 @@ export const SignupListener = () => {
     nickname:"",
     email: "",
     password: "",
-    
-    });
-  
-  const handleInputChange = event => {
-    const { name, value } = event.target;
-    onChange(name, value);
-  };
+    description: "",
+    role: ""
+   });
 
-  const onClickEnter = (event) => {
-   event.preventDefault();
-    
- 
-    const body = {
-      name: form.name, 
-      nickname: form.nickname,
-      email: form.email,
-      password: form.password
-    }
-    
-    axios
-    .post("http://localhost:3003/user", body)
-    .then(response=>{
-      localStorage.setItem("token", response.data.token);
-      history.push('/')
-    })
-    .catch(error=>{
-      alert(error.message);
-    })
-  };
   const currencies = [
     {
       value: 'BANDA',
@@ -87,25 +71,48 @@ export const SignupListener = () => {
       value: 'OUVINTE_GRATUITO',
       label: 'Ouvinte (plano gratuito)',
     }
-    
   ];
 
-  return (
+  const onClickEnter = (event) => {
+   event.preventDefault();
+     
+    const body = {
+      name: form.name, 
+      nickname: form.nickname,
+      email: form.email,
+      password: form.password,
+      description: form.description,
+      role: form.role
+    }
     
-      
+    axios
+    .post("http://localhost:3003/user", body)
+    .then(response=>{
+      localStorage.setItem("token", response.data.token);
+      history.push('/HomeUser')
+      console.log(response)
+    })
+    .catch(error=>{
+      alert(error.message);
+    })
+  };
+  
+   return (
+    <div>
+      <HeaderUser/>
       <ContainerSignUp>
-         <ImageLogo src={logo} alt="Spotenu"/>
-      <Form onSubmit={ handleInputChange}>
+       <Form onSubmit={ handleInputChange}>
         <SignupTitle>Cadastrar</SignupTitle>
         <FormControl
             className={clsx(classes.margin, classes.textField)}
             variant="outlined"
           >
         <TextField
+          name="role"
           id="outlined-select-currency"
           select
           label="Tipo de usuário"
-          value={currency}
+          value={form.role}
           onChange={handleChange}
           variant="outlined"
         >
@@ -207,28 +214,31 @@ export const SignupListener = () => {
               labelWidth={70}
             />
           </FormControl>
-          <FormControl
+          
+          {currency === "BANDA" ?<FormControl
             className={clsx(classes.margin, classes.textField)}
             variant="outlined"
           >
               <TextField
+              name="description"
               id="outlined-multiline-static"
               label="Descrição"
               multiline
               rows={4}
+              value={form.description}
+              onChange={handleInputChange}
               placeholder="Conte sobre sua banda"
               variant="outlined"
               required
             />
-            </FormControl>
-
-          
-          <ButtonStyled onClick={()=>{history.push('/homeUser')}}>Entrar</ButtonStyled>
+            </FormControl>:<></> }
+           
+          <ButtonStyled onClick={onClickEnter}>Entrar</ButtonStyled>
           </Form>
           <GoLoginText>Já tem uma conta? <b  onClick={()=>{history.push('/login')}}>Faça seu login</b></GoLoginText>
           
           </ContainerSignUp>
           
-   
+          </div>
   )
 }

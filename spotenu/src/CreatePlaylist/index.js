@@ -1,6 +1,8 @@
 import React from 'react'
+import{ HeaderUser} from '../Components/Header'
+import { Footer } from '../Components/Footer';
 import {useForm} from '../Hooks/useForm'
-import {Container, Form, Input, TituloBuscar} from './style'
+import {Container,ContentContainer, Form, Input, TituloBuscar} from './style'
 
 export const CreatePlaylist = () => {
   const { form, onChange } = useForm({
@@ -16,22 +18,22 @@ const submit = (event) => {
 }
   return (
     <Container>
+      <HeaderUser/>
+       <ContentContainer>
       <TituloBuscar>Criar Playlists</TituloBuscar>
       <Form onSubmit={submit}>
         <Input
-       
          name="name"
          type="text"
          value={form.search}
          onChange={handleInputChange}
          placeholder="Dê um nome à sua playlist"
          required
-        
         />
+        
       </Form>
-      
-               
-      
+      </ContentContainer>
+       <Footer/>  
     </Container>
   )
 }

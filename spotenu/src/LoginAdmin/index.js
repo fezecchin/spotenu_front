@@ -1,7 +1,7 @@
 import React from 'react'
 import {useForm} from '../Hooks/useForm'
 import axios from 'axios'
-import {Form,ContainerLogin, ButtonStyled,LoginTitle,NoSignupText} from './style'
+import {Form,ContainerLogin, ButtonStyled,LoginTitle} from '../Login/style'
 import clsx from "clsx";
 import IconButton from "@material-ui/core/IconButton";
 import OutlinedInput from "@material-ui/core/OutlinedInput";
@@ -12,16 +12,12 @@ import Visibility from "@material-ui/icons/Visibility";
 import VisibilityOff from "@material-ui/icons/VisibilityOff";
 import {useStyles} from '../Components/useStyles'
 import {useHistory} from "react-router-dom";
-import {HeaderUser} from "../Components/Header"
+import {HeaderAdmin} from '../Components/HeaderAdmin'
 
 
-
-export const Login = () => {
+export const LoginAdmin = () => {
   const classes = useStyles();
   const history = useHistory();
-  const token = localStorage.getItem("token");
-                         
- 
 
   const [values, setValues] = React.useState({
     password: "",
@@ -55,25 +51,20 @@ export const Login = () => {
       .post("http://localhost:3003/user/login", body)
       .then(response => {
         localStorage.setItem("token", response.data.token);
-        history.push('/HomeUser')
+        history.push('/Admin')
       })
       .catch(error=>{
         console.log(error)
         alert(error.message);
       })
-  }
-   const goToSignUpPage = () =>{
-       history.push("/signupListener")
-    }
-
-    const goToLoginAdminPage = () =>{
-      history.push("/LoginAdmin")
+  
    }
 
   return (
     <div>
-      <HeaderUser/>
-       <ContainerLogin>
+      
+      <HeaderAdmin/>
+      <ContainerLogin>
         <Form onSubmit={handleInputChange}>
           <LoginTitle>Login</LoginTitle>
          <FormControl
@@ -107,7 +98,7 @@ export const Login = () => {
             id="outlined-adornment-password"
             type={values.showPassword ? "text" : "password"}
             value={form.password}
-            placeholder="Mínimo 6 caracteres"
+            placeholder="Mínimo 10 caracteres"
             onChange={handleInputChange}
             required
             endAdornment={
@@ -130,10 +121,10 @@ export const Login = () => {
            variant="contained"
            onClick={onClickEnter}>Entrar</ButtonStyled>
       </Form>
-          <NoSignupText>Não possui cadastro? <b onClick={goToSignUpPage}>Clique Aqui</b></NoSignupText>
-          <NoSignupText>Sou Admin <b onClick={goToLoginAdminPage}>Clique Aqui</b></NoSignupText>
-
-     </ContainerLogin>
-   </div>
+     
+      </ContainerLogin>
+        
+   
+    </div>
   )
 }
